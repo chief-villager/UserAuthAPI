@@ -424,8 +424,8 @@ namespace SecurityQuestionAuthAPI.Services
         {
             string subject = messageSubject;
             string body = messageBody;
-            string SendingMail = "ssolis4789@gmail.com";
-            string Password = "wnvfifrtwjgyblcy";
+            string SendingMail = "";
+            string Password = "";
 
 
             using (SmtpClient smtpClient = new SmtpClient())
