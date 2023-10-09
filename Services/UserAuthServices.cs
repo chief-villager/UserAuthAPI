@@ -64,7 +64,7 @@ namespace SecurityQuestionAuthAPI.Services
 
             await _securityAuthContext.AddAsync(user);
             await _securityAuthContext.SaveChangesAsync();
-            var messageBody = $"welcome to our platform {username}";
+            var messageBody = GetWelcomeEmailBody(username);
             var messageSubject = $"welcome {username}";
             _backgroundJobClient.Schedule(() => SmtpSenderProfile(email, messageBody, messageSubject), TimeSpan.FromSeconds(20));
             return user;
@@ -338,48 +338,85 @@ namespace SecurityQuestionAuthAPI.Services
 
         public async Task<int> CreateAndSaveOTP(string email)
         {
-            var OTP = GenerateOtp();
-            var existingUser = await _securityAuthContext.Users.FirstOrDefaultAsync(x => x.Email == email);
-            OTP oTP = new OTP();
-            oTP.Code = OTP;
-            oTP.user = existingUser;
-            oTP.UserEmail = email;
-            oTP.UserId = existingUser.Id;
+            try
+            {
+                var OTP = GenerateOtp();
+                var existingUser = await _securityAuthContext.Users.FirstOrDefaultAsync(x => x.Email == email);
+                OTP oTP = new OTP();
+                oTP.Code = OTP;
+                oTP.user = existingUser;
+                oTP.UserEmail = email;
+                oTP.UserId = existingUser.Id;
 
-            await _securityAuthContext.AddAsync(oTP);
-            await _securityAuthContext.SaveChangesAsync();
-            return OTP;
+                await _securityAuthContext.AddAsync(oTP);
+                await _securityAuthContext.SaveChangesAsync();
+                return OTP;
+            }
+            catch (Exception ex)
+            {
+
+                throw new InvalidOperationException(ex.Message + "unable to save OTP");
+            }
+
 
         }
 
         public async Task<bool> DeleteOTP(string email)
         {
-            var response = await _securityAuthContext.Otp.Where(x => x.UserEmail == email).ToListAsync();
-            if (response == null)
+            try
             {
+                var response = await _securityAuthContext.Otp.Where(x => x.UserEmail == email).ToListAsync();
+                if (response == null)
+                {
+                    return false;
+                }
+                response.ForEach(item => _securityAuthContext.Remove(item));
+                await _securityAuthContext.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException dbEx)
+            {
+
+                Console.WriteLine(dbEx.Message, "Error while deleting OTP records");
                 return false;
             }
-            response.ForEach(item => _securityAuthContext.Remove(item));
-            await _securityAuthContext.SaveChangesAsync();
-            return true;
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+
         }
 
         public async Task<int> SendOtpToUserEmailAsync(string email)
         {
-
-            var OTP = await CreateAndSaveOTP(email);
-            if (OTP == null)
+            try
             {
-                throw new Exception("Otp not Generated");
-            }
-            string subject = "Your OTP Code";
-            string body = $"Your OTP code is: {OTP}";
-            string SendingMail = "ssolis4789@gmail.com";
-            string Password = "wnvfifrtwjgyblcy";
-            _backgroundJobClient.Enqueue(() => SmtpSenderProfile(email, body, subject));
-            _backgroundJobClient.Schedule(() => DeleteOTP(email), TimeSpan.FromMinutes(15));
+                var OTP = await CreateAndSaveOTP(email);
+                if (OTP == null)
+                {
+                    throw new Exception("Otp not Generated");
+                }
+                string subject = "Your OTP Code";
+                string body = GetOtpEmailBody(OTP);
+                _backgroundJobClient.Enqueue(() => SmtpSenderProfile(email, body, subject));
+                _backgroundJobClient.Schedule(() => DeleteOTP(email), TimeSpan.FromMinutes(15));
+                return OTP;
 
-            return OTP;
+            }
+            catch (SmtpException smtpEx)
+            {
+                Console.WriteLine(smtpEx.Message, "Error sending OTP email");
+                return -1;
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine("An error occurred" + ex.Message);
+                return -2;
+            }
+
 
         }
 
@@ -387,8 +424,8 @@ namespace SecurityQuestionAuthAPI.Services
         {
             string subject = messageSubject;
             string body = messageBody;
-            string SendingMail = "";
-            string Password = "";
+            string SendingMail = "ssolis4789@gmail.com";
+            string Password = "wnvfifrtwjgyblcy";
 
 
             using (SmtpClient smtpClient = new SmtpClient())
@@ -404,6 +441,7 @@ namespace SecurityQuestionAuthAPI.Services
                     mailMessage.To.Add(email);
                     mailMessage.Subject = subject;
                     mailMessage.Body = body;
+                    mailMessage.IsBodyHtml = true;
 
 
 
@@ -453,6 +491,18 @@ namespace SecurityQuestionAuthAPI.Services
 
 
 
+        }
+
+        private string GetWelcomeEmailBody(string userName)
+        {
+            var welcomeHtml = File.ReadAllText("EmailMessages/WelcomeMessage.cshtml"); // Read HTML file
+            return welcomeHtml.Replace("{UserName}", userName);
+        }
+
+        private string GetOtpEmailBody(int otp)
+        {
+            var otpHtml = File.ReadAllText("EmailMessages/OTPcodeMessage.cshtml");
+            return otpHtml.Replace("{otp}", otp.ToString());
         }
 
 

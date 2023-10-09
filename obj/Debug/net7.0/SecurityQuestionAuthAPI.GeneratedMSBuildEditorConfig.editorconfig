@@ -15,3 +15,11 @@ build_property.SupportLocalizedComponentNames =
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
 build_property.MSBuildProjectDirectory = /Users/admin/Documents/Projects/DotNet/SecurityQuestionAuthAPI
 build_property._RazorSourceGeneratorDebug = 
+
+[/Users/admin/Documents/Projects/DotNet/SecurityQuestionAuthAPI/EmailMessages/OTPcodeMessage.cshtml]
+build_metadata.AdditionalFiles.TargetPath = RW1haWxNZXNzYWdlcy9PVFBjb2RlTWVzc2FnZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/admin/Documents/Projects/DotNet/SecurityQuestionAuthAPI/EmailMessages/WelcomeMessage.cshtml]
+build_metadata.AdditionalFiles.TargetPath = RW1haWxNZXNzYWdlcy9XZWxjb21lTWVzc2FnZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 

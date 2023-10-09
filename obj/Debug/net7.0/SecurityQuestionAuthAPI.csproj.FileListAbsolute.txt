@@ -87,3 +87,5 @@
 /Users/admin/Documents/Projects/DotNet/SecurityQuestionAuthAPI/bin/Debug/net7.0/runtimes/win-arm64/native/e_sqlite3.dll
 /Users/admin/Documents/Projects/DotNet/SecurityQuestionAuthAPI/bin/Debug/net7.0/runtimes/win-x64/native/e_sqlite3.dll
 /Users/admin/Documents/Projects/DotNet/SecurityQuestionAuthAPI/bin/Debug/net7.0/runtimes/win-x86/native/e_sqlite3.dll
+/Users/admin/Documents/Projects/DotNet/SecurityQuestionAuthAPI/obj/Debug/net7.0/SecurityQuestionAuthAPI.RazorAssemblyInfo.cache
+/Users/admin/Documents/Projects/DotNet/SecurityQuestionAuthAPI/obj/Debug/net7.0/SecurityQuestionAuthAPI.RazorAssemblyInfo.cs
