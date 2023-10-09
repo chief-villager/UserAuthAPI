@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "q5ARH2g39ndt8OocPvTyto4IjW0RSb/39JOrlIAR1sw=",
+  "Source": "SecurityQuestionAuthAPI",
+  "BasePath": "_content/SecurityQuestionAuthAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
